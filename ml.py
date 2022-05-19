@@ -35,10 +35,10 @@ def create_dqn(env, load_from_checkpoint=False):
     policy = LinearAnnealedPolicy(
         EpsGreedyQPolicy(),
         attr="eps",
-        value_max=0.25,
-        value_min=0.01,
+        value_max=0.20,
+        value_min=0.05,
         value_test=0.0,
-        nb_steps=200000
+        nb_steps=500000
     )
 
     dqn = DQNAgent(
@@ -60,7 +60,7 @@ def train_dqn(dqn, env, save_checkpoint=False):
 
     # Training the model
     env.opponent_policy = wins_and_blocks_wins_policy
-    dqn.fit(env, nb_steps=200000)
+    dqn.fit(env, nb_steps=500000)
 
     if save_checkpoint:
         save_path = NO_WIN_DETECTION_PATH
@@ -92,7 +92,7 @@ def test_dqn(dqn, env):
     env.reset_records()
 
     env.opponent_policy = wins_blocks_wins_and_prefers_center_policy
-    dqn.test(env, nb_episodes=100, verbose=False, visualize=False)
+    dqn.test(env, nb_episodes=1000, verbose=False, visualize=False)
     print_testing_outcomes('Wins, Blocks Wins, and Prefers Center', env.training_wins, env.training_losses, env.training_disqualifications, env.training_ties)
     env.reset_records()
 

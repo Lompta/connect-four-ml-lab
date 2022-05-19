@@ -65,7 +65,8 @@ def wins_blocks_wins_and_prefers_center_policy(game):
 def play_operator_policy(game):
     game.draw_board()
     action = input('What move?')
-    return int(action)
+    # 1 indexed
+    return int(action) - 1
 
 def mixed_strategy_policy_factory(policies):
     def mixed_strategy_policy(game):

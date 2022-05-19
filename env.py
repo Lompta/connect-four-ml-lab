@@ -19,9 +19,9 @@ class ConnectFourEnv(Env):
         self.keeping_score = keeping_score
         self.action_space = list(range(columns))
         self.observation_space_length = self.rows * self.columns * 3
-        # Add two extra columns of observation for if each move wins for self or opponent, if we enable win detection
+        # Add four extra columns of observation for if each move wins for self or opponent, if we enable win detection
         if anticipate_immediate_wins:
-            self.observation_space_length = self.observation_space_length + (self.columns * 2)
+            self.observation_space_length = self.observation_space_length + (self.columns * 4)
         self.observation_space = self.describe_embedding()
         self.training_wins = 0
         self.training_losses = 0
@@ -86,22 +86,22 @@ class ConnectFourEnv(Env):
         return new_reward
 
     def add_detected_wins_to_observation(self):
-        observation_array_to_append = []
+        observation_array_to_append = np.zeros(self.columns * 4)
         for c in range(self.columns):
             column_array_for_move = self.active_game.board_as_columns[c]
             if self.active_game.board_state[column_array_for_move[0]] == 0:
                 move = self.active_game.find_position_for_move(c)
                 if self.active_game.check_victory(move, 1):
-                    observation_array_to_append.append(1)
-                else:
-                    observation_array_to_append.append(0)
+                    observation_array_to_append[c * 4] = 1
                 if self.active_game.check_victory(move, -1):
-                    observation_array_to_append.append(1)
-                else:
-                    observation_array_to_append.append(0)
-            else:
-                observation_array_to_append.append(0)
-                observation_array_to_append.append(0)
+                    observation_array_to_append[c * 4 + 1] = 1
+
+                if (move - self.columns) >= 0:
+                    if self.active_game.check_victory(move - self.columns, 1):
+                        observation_array_to_append[c * 4 + 2] = 1
+                    if self.active_game.check_victory(move - self.columns, -1):
+                        observation_array_to_append[c * 4 + 3] = 1
+
         return observation_array_to_append
 
     def step(self, action):
@@ -124,7 +124,7 @@ class ConnectFourEnv(Env):
         # victory!
         if game_metadata[1] == 1:
             reward = 30
-            if (self.keeping_score):
+            if self.keeping_score:
                 self.training_wins = self.training_wins + 1
 
         # game is complete
@@ -143,14 +143,14 @@ class ConnectFourEnv(Env):
 
             if game_metadata[1] == 1:
                 reward = -30
-                if (self.keeping_score):
+                if self.keeping_score:
                     self.training_losses = self.training_losses + 1
 
             if game_metadata[2] == 1:
                 # don't give that much reward if the opponent just was disqualified
                 reward = 10
-                if (self.keeping_score):
-                    self.training_losses = self.training_wins + 1
+                if self.keeping_score:
+                    self.training_wins = self.training_wins + 1
 
             if game_metadata[0] == 1:
                 done = True
