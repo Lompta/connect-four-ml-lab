@@ -1,0 +1,15 @@
+.game-piece {
+    border-radius: 50%; /* round the borders */
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+    background-color: transparent; /* default color */
+  }
+  
+  .game-piece.red {
+    background-color: red;
+  }
+  
+  .game-piece.yellow {
+    background-color: yellow;
+  }

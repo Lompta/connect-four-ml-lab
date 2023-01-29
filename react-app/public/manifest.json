@@ -1,0 +1,8 @@
+{
+  "short_name": "Connect 4 App",
+  "name": "Create 4 DQN Frontend",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
