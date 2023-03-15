@@ -1,10 +1,9 @@
 ## Connect Four ML Lab
-Dependencies:
-- rl
-- gym
-- keras
+The dependencies are in environment.yml. Create a conda environment with these, and all python code should work. For the user interface, run `npm install` then `npm run dev` in the react-app directory.
 
-Once you have these, just run main.py.
+To run the server for the UI, run server.py in the set up conda environment.
+
+To train the model, just run main.py.
 Ml.py has various commented out options for things like training for more/less time, testing vs. different opponents/strategies, playing a game against the DQN yourself, etc. I plan to make this more straightforwardly customizable in future releases.
 
 The DQN only receives reward at the end of each episode - ie. once per game. This causes it not to do very well against stronger strategies. It can do very well against deterministic strategies it's trained on, or against random strategies if trained against random strategies.
